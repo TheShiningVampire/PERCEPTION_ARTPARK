@@ -6,7 +6,8 @@ The entire perception stack for a self driving vehicle (SDV)
 
 Original Video | YOLO v5 Predictions
 --- | ---
-![Lyft_level5_original](https://user-images.githubusercontent.com/55876739/132419488-98b0fc4c-8ecd-4b0e-9477-5cbe37f5c695.gif)  | ![Lyft_level5_detections](https://user-images.githubusercontent.com/55876739/132419535-32743355-de5e-4717-bdb1-56e2c15cf040.gif)
+![Lyft_level5_original](https://user-images.githubusercontent.com/55876739/132419488-98b0fc4c-8ecd-4b0e-9477-5cbe37f5c695.gif)  | ![Lyft_level5_detections](https://user-images.githubusercontent.com/55876739/132420202-de724efb-35b5-4d6e-9da0-344f9b73cea4.gif)
+
 
 ## KITTI Dataset
 
