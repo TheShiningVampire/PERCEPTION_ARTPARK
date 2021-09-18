@@ -338,3 +338,6 @@ runs/detect/exp/bus.jpg
 Datasets
 Results
 runs/detect/exp6/Lyft-level5.mp4
+Report.aux
+Report.fdb_latexmk
+Report.fls
