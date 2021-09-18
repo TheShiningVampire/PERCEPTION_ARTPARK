@@ -30,7 +30,7 @@
 \maketitle
 
 \begin{abstract}
-  This document specifies the implementation details of the perception module of a self-driving car. This project was completed as a part of the Summer Internship program at ARTPARK, IISC Bangalore, under Prof. Naveen Arulselvan. The perception module consists of multi-object detection, tracking and trajectory prediction. The multi-object detection is based on the \textit{YOLO v5} algorithm. We have used the \textit{ Deep Sort} algorithm for multi-object tracking based on the paper "Simple online and realtime tracking with a deep association metric". The trajectory prediction module is implemented using \textit{PEC Net} based on the paper "It is not the journey but the destination: Endpoint conditioned trajectory prediction". Python and PyTorch framework have been used for the code implementation.
+  This document specifies the implementation details of the perception module using cameras of a self-driving car. This project was completed as a part of the Summer Internship program at ARTPARK, IISC Bangalore, under Prof. Naveen Arulselvan. The perception module consists of multi-object detection, tracking and trajectory prediction. The multi-object detection is based on the \textit{YOLO v5} algorithm. We have used the \textit{ Deep Sort} algorithm for multi-object tracking based on the paper "Simple online and realtime tracking with a deep association metric". The trajectory prediction module is implemented using \textit{PEC Net} based on the paper "It is not the journey but the destination: Endpoint conditioned trajectory prediction". Python and PyTorch framework have been used for the code implementation.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -38,8 +38,17 @@
 \end{IEEEkeywords}
 
 \section{Introduction}
-This document is a model and instructions for \LaTeX.
-Please observe the conference page limits.
+Perception is a central problem for any autonomous agent, be it humans, robots or self-driving vehicles. This module helps for a smoother and more reliable control of the car using the path-planning module of the autonomous agent. It can also aid in pose estimation. For our project, we have included the following sub-modules for the perception:
+\begin{itemize}
+  \item Multi-object detection using the \textit{YOLOv5} algorithm.
+  \item Multi-object tracking using the \textit{Deep Sort} algorithm.
+  \item Trajectory prediction using the \textit{PEC Net} algorithm.
+\end{itemize} \\
+Object detection in the context of autonomous driving refers to detecting the objects present in the scene (making use of the camera sensors on the autonomous vehicle) by making bounding boxes surrounding the detected objects. This is followed by identifying the class of the objects. The family of YOLO (You Only Look Once) models are the most popular object detection models for autonomous driving. The YOLOv5 model is a state-of-the-art object detection model that is capable of detecting 80 classes of objects. The model is trained on the MS COCO dataset, containing over 1.2 million images and over 20,000 bounding boxes for the 80 classes of objects. \\
+Multi-object tracking refers to the problem of tracking the objects detected across frames. For this project, we are implementing the \textit{Deep Sort} algorithm for tracking the bounding boxes. Simple Online Realtime Tracking \textit{SORT} is an approach of multi-object tracking using simple and effective algorithms such as Kalman Filter. Including an association metric (using deep learning) for the detected object across frames leads to a more robust and accurate multi-object tracking called Deep Sort. \\
+The problem of trajectory prediction (as is already clear from the name) involves predicting the agents detected by the YOLOv5 model. PEC Net uses an encoder-decoder architecture for predicting the agents detected by the YOLOv5 model. The encoder is a neural network that encodes the input image into a vector of fixed size. The decoder is a fully connected neural network that decodes the vector into a high-dimensional vector. For the implementation of PEC Net, we need an aerial view of the scene. However, in our implementation, we are working with datasets of camera images taken in the ego-centric view. Hence for a complete end-to-end perception pipeline, we need to move the detections of our object detection module to birds-eye view. This is a part of future work. \\
+
+
 
 \section{Ease of Use}
 
