@@ -11,6 +11,8 @@
 *.sln.docstates
 *.avi
 *.mp4
+*.jpeg
+*.png
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
