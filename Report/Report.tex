@@ -1,0 +1,117 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+
+
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Multi-Object tracking and Trajectory Prediction for Autonomous Vehicles\\
+}
+
+\author{\IEEEauthorblockN{Vinit Awale}
+  \IEEEauthorblockA{
+    \textit{Department of Electrical Engineering} \\
+    \textit{Indian Institute of Technology, Bombay}\\
+    \textit{Mumbai, India} \\
+    awale.vinit@gmail.com}
+  \and
+  \IEEEauthorblockN{Prof. Naveen Arulselvan}
+  \IEEEauthorblockA{\textit{AI \& Robotics Technology Park} \\
+    \textit{ARTPARK, IISC Bangalore}\\
+    Karnataka, India \\
+  }
+}
+
+\maketitle
+
+\begin{abstract}
+  This document specifies the implementation details of the perception module using cameras of a self-driving car. This project was completed as a part of the Summer Internship program at ARTPARK, IISC Bangalore, under the mentorship of Prof. Naveen Arulselvan. The perception module consists of multi-object detection, tracking and trajectory prediction. The multi-object detection is based on the \textit{YOLO v5} algorithm{} \cite{YOLOv5}. We have used the \textit{ Deep Sort} algorithm for multi-object tracking based on the paper "Simple online and realtime tracking with a deep association metric". The trajectory prediction module is implemented using \textit{PEC Net} based on the paper "It is not the journey but the destination: Endpoint conditioned trajectory prediction". Python and PyTorch framework have been used for the code implementation.
+\end{abstract}
+
+\begin{IEEEkeywords}
+  Object detection, multi-object tracking, trajectory prediction, YOLOv5, Deep Sort, PEC Net, Autonomous vehicles
+\end{IEEEkeywords}
+
+\section{Introduction}
+Perception is a central problem for any autonomous agent, be it humans, robots or self-driving vehicles. This module helps for a smoother and more reliable control of the car using the path-planning module of the autonomous agent. It can also aid in pose estimation. For our project, we have included the following sub-modules for the perception:
+\begin{itemize}
+  \item Multi-object detection using the \textit{YOLOv5} algorithm.
+  \item Multi-object tracking using the \textit{Deep Sort} algorithm.
+  \item Trajectory prediction using the \textit{PEC Net} algorithm.
+\end{itemize} \\
+Object detection in the context of autonomous driving refers to detecting the objects present in the scene (making use of the camera sensors on the autonomous vehicle) by making bounding boxes surrounding the detected objects. This is followed by identifying the class of the objects. The family of YOLO (You Only Look Once) models are the most popular object detection models for autonomous driving. The YOLOv5 model is a state-of-the-art object detection model that is capable of detecting 80 classes of objects. The model is trained on the MS COCO dataset, containing over 1.2 million images and over 20,000 bounding boxes for the 80 classes of objects. \\
+Multi-object tracking refers to the problem of tracking the objects detected across frames. For this project, we are implementing the \textit{Deep Sort} algorithm for tracking the bounding boxes. Simple Online Realtime Tracking \textit{SORT} is an approach of multi-object tracking using simple and effective algorithms such as Kalman Filter. Including an association metric (using deep learning) for the detected object across frames leads to a more robust and accurate multi-object tracking called Deep Sort. \\
+The problem of trajectory prediction (as is already apparent from the name) involves predicting the agents detected by the YOLOv5 model. PEC Net uses an encoder-decoder architecture for predicting the agents detected by the YOLOv5 model. The encoder is a neural network that encodes the input image into a vector of fixed size. The decoder is a fully connected neural network that decodes the vector into a high-dimensional vector. For the implementation of PEC Net, we need an aerial view of the scene. However, we are working with datasets of camera images taken in the ego-centric view in our implementation. Hence for a complete end-to-end perception pipeline, we need to move the detections of our object detection module to birds-eye view. This is a part of future work. \\
+The code for the project is available at %<enter link>%
+
+\section{Background and Related Works}
+\subsection{Object Detection}
+The problem of object detection and object tracking is quite well known in the field of computer vision. Modern Object detectors are composed of two main components:
+\begin{itemize}
+  \item The backbone: This is the part of the detector that is responsible for extracting the features of the objects in the image using a deep convolutional neural network.
+  \item The head: This is the part of the detector that is responsible for classifying the objects in the image.
+\end{itemize}
+
+On the basis of head component, we have two main approaches for object detection:
+\begin{itemize}
+  \item Two stage Object Detector: This approach leads to high localization and object detection accuracy of the results. \\
+        Example: R-CNN, fast R-CNN, faster R-CNN, R-FCN, Libra R-CNN, etc
+  \item One stage Object Detector: This approach leads to a higher reference speed. \\
+        Example: SSD, YOLO, RetinaNet, etc
+\end{itemize}
+
+We have chosen the One-stage Object Detector approach since we need a higher reference speed for autonomous driving applications. Specifically, we have used YOLO detection for our application.
+
+\subsection{Multi-Object Tracking}
+Multi-object tracking methods usually include a tracking network and a detection network. The tracking network is responsible for updating the position and orientation of the object in the scene. The detection network is responsible for detecting the object in the scene. The tracking network is responsible for the data association across the frames.  \\
+The detections from the object detector can be processed in one of the following ways:
+\begin{itemize}
+  \item Batch method: In this approach, the data association problem is solved by storing the image frames with detections in a batch. The batch is then processed one by one. \\
+  \item Online method: In this approach, the data association problem is solved by processing an image frame with a detection one at a time. \\
+\end{itemize}
+
+Practically, the batch method performs better than online methods for the tracking network. However, the batch method is computationally expensive, which means that the tracking network needs to process the entire batch of detections before starting the next frame. Hence, this approach is not viable for our project. Therefore, we have chosen the online method for our project. \\
+Famous object tracking methods include:\\
+KCF tracker, SORT tracker, MOSSE, KCF+SORT, MOSSE+KCF, MOSSE+KCF+SORT, MedianFlow, etc. \\
+
+For our project, we have chosen the Deep SORT, an online multi-object tracking algorithm that incorporates a deep association metric for the tracking network.
+
+\subsection{Trajectory Prediction}
+
+
+\section{Datasets}
+Autonomous driving is an emerging field; hence there are limited datasets that can be used for training and testing which would resemble the real world. The datasets that we have used for our project are:
+\begin{itemize}
+  \item Lyft level 5 Prediction dataset \cite{ Lyft} \\
+        This is a self-driving dataset for motion prediction, containing over 1,000 hours of data. This was collected by a fleet of 20 autonomous vehicles along a fixed route in Palo Alto, California, over a four-month period. It consists of 170,000 scenes, where each scene is 25 seconds long and captures the perception output of the self-driving system, which encodes the precise positions and motions of nearby vehicles, cyclists, and pedestrians over time.
+  \item KITTI dataset \cite{KITTI} \\
+        The dataset comprises of Raw (unsynced+unrectified) and processed (synced+rectified) color stereo sequences (0.5 Megapixels, stored in png format), captured and synchronized at 10 Hz. This dataset was only used for testing the perception modules of our project. \\
+        Along with camera sequences, the dataset also contains 3D Velodyne point clouds, 3D GPS/IMU data and 3D object tracklet labels. All of these will be useful for the proposed future works of the project. \\
+\end{itemize}
+\section{Procedure, Experiments and Results}
+\subsection{Object detection}
+\subsubsection{YOLOv3}
+
+
+
+
+\section{Limitations}
+
+\section{Future work}
+
+\section{Acknowledgment}
+
+\bibliographystyle{plain}
+\bibliography{cite.bib}
+
+
+\end{document}

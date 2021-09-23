@@ -4,22 +4,22 @@
 Course:  Training YOLO v3 for Objects Detection with Custom Data
 
 Section-2
-Objects Detection on Video with YOLO v3 and OpenCV
-File: yolo-3-video.py
+Objects Detection in Real Time with YOLO v3 and OpenCV
+File: yolo-3-camera.py
 """
 
 
-# Detecting Objects on Video with OpenCV deep learning library
+# Detecting Objects in Real Time with OpenCV deep learning library
 #
 # Algorithm:
-# Reading input video --> Loading YOLO v3 Network -->
+# Reading stream video from camera --> Loading YOLO v3 Network -->
 # --> Reading frames in the loop --> Getting blob from the frame -->
 # --> Implementing Forward Pass --> Getting Bounding Boxes -->
 # --> Non-maximum Suppression --> Drawing Bounding Boxes with Labels -->
-# --> Writing processed frames
+# --> Showing processed frames in OpenCV Window
 #
 # Result:
-# New video file with Detected Objects, Bounding Boxes and Labels
+# Window with Detected Objects, Bounding Boxes and Labels in Real Time
 
 
 # Importing needed libraries
@@ -30,27 +30,19 @@ import time
 
 """
 Start of:
-Reading input video
+Reading stream video from camera
 """
 
 # Defining 'VideoCapture' object
-# and reading video from a file
-# Pay attention! If you're using Windows, the path might looks like:
-# r'videos\traffic-cars.mp4'
-# or:
-# 'videos\\traffic-cars.mp4'
-video = cv2.VideoCapture(r'dataset\Video\Scene_one.mp4')
-
-# Preparing variable for writer
-# that we will use to write processed frames
-writer = None
+# and reading stream video from camera
+camera = cv2.VideoCapture(0)
 
 # Preparing variables for spatial dimensions of the frames
 h, w = None, None
 
 """
 End of:
-Reading input video
+Reading stream video from camera
 """
 
 
@@ -130,24 +122,10 @@ Start of:
 Reading frames in the loop
 """
 
-# Defining variable for counting frames
-# At the end we will show total amount of processed frames
-f = 0
-
-# Defining variable for counting total time
-# At the end we will show time spent for processing all frames
-t = 0
-
 # Defining loop for catching frames
 while True:
-    # Capturing frame-by-frame
-    ret, frame = video.read()
-
-    # If the frame was not retrieved
-    # e.g.: at the end of the video,
-    # then we break the loop
-    if not ret:
-        break
+    # Capturing frame-by-frame from camera
+    _, frame = camera.read()
 
     # Getting spatial dimensions of the frame
     # we do it only once from the very beginning
@@ -187,12 +165,8 @@ while True:
     output_from_network = network.forward(layers_names_output)
     end = time.time()
 
-    # Increasing counters for frames and total time
-    f += 1
-    t += end - start
-
     # Showing spent time for single current frame
-    print('Frame number {0} took {1:.5f} seconds'.format(f, end - start))
+    print('Current frame took {:.5f} seconds'.format(end - start))
 
     """
     End of:
@@ -224,7 +198,7 @@ while True:
             # # Check point
             # # Every 'detected_objects' numpy array has first 4 numbers with
             # # bounding box coordinates and rest 80 with probabilities
-            #  # for every class
+            # # for every class
             # print(detected_objects.shape)  # (85,)
 
             # Eliminating weak predictions with minimum probability
@@ -319,31 +293,25 @@ while True:
 
     """
     Start of:
-    Writing processed frame into the file
+    Showing processed frames in OpenCV Window
     """
 
-    # Initializing writer
-    # we do it only once from the very beginning
-    # when we get spatial dimensions of the frames
-    if writer is None:
-        # Constructing code of the codec
-        # to be used in the function VideoWriter
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    # Showing results obtained from camera in Real Time
 
-        # Writing current processed frame into the video file
-        # Pay attention! If you're using Windows, yours path might looks like:
-        # r'videos\result-traffic-cars.mp4'
-        # or:
-        # 'videos\\result-traffic-cars.mp4'
-        writer = cv2.VideoWriter('videos/result-traffic-cars.mp4', fourcc, 30,
-                                 (frame.shape[1], frame.shape[0]), True)
+    # Showing current frame with detected objects
+    # Giving name to the window with current frame
+    # And specifying that window is resizable
+    cv2.namedWindow('YOLO v3 Real Time Detections', cv2.WINDOW_NORMAL)
+    # Pay attention! 'cv2.imshow' takes images in BGR format
+    cv2.imshow('YOLO v3 Real Time Detections', frame)
 
-    # Write processed current frame to the file
-    writer.write(frame)
+    # Breaking the loop if 'q' is pressed
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
     """
     End of:
-    Writing processed frame into the file
+    Showing processed frames in OpenCV Window
     """
 
 """
@@ -352,31 +320,19 @@ Reading frames in the loop
 """
 
 
-# Printing final results
-print()
-print('Total number of frames', f)
-print('Total amount of time {:.5f} seconds'.format(t))
-print('FPS:', round((f / t), 1))
-
-
-# Releasing video reader and writer
-video.release()
-writer.release()
+# Releasing camera
+camera.release()
+# Destroying all opened OpenCV windows
+cv2.destroyAllWindows()
 
 
 """
 Some comments
 
-What is a FOURCC?
-    FOURCC is short for "four character code" - an identifier for a video codec,
-    compression format, colour or pixel format used in media files.
-    http://www.fourcc.org
+cv2.VideoCapture(0)
 
-
-Parameters for cv2.VideoWriter():
-    filename - Name of the output video file.
-    fourcc - 4-character code of codec used to compress the frames.
-    fps	- Frame rate of the created video.
-    frameSize - Size of the video frames.
-    isColor	- If it True, the encoder will expect and encode colour frames.
+To capture video, it is needed to create VideoCapture object.
+Its argument can be camera's index or name of video file.
+Camera index is usually 0 for built-in one.
+Try to select other cameras by passing 1, 2, 3, etc.
 """

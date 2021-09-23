@@ -348,3 +348,4 @@ Report.run.xml
 Report.synctex.gz
 .vscode/settings.json
 Report.zip
+Object_detection/YOLOv3/yolo-coco-data/yolov3.weights

@@ -1,14 +1,3 @@
-
-
-"""
-Course:  Training YOLO v3 for Objects Detection with Custom Data
-
-Section-2
-Objects Detection on Video with YOLO v3 and OpenCV
-File: yolo-3-video.py
-"""
-
-
 # Detecting Objects on Video with OpenCV deep learning library
 #
 # Algorithm:
@@ -35,10 +24,7 @@ Reading input video
 
 # Defining 'VideoCapture' object
 # and reading video from a file
-# Pay attention! If you're using Windows, the path might looks like:
-# r'videos\traffic-cars.mp4'
-# or:
-# 'videos\\traffic-cars.mp4'
+
 video = cv2.VideoCapture(r'dataset\Video\Scene_one.mp4')
 
 # Preparing variable for writer
@@ -83,8 +69,7 @@ with open('yolo-coco-data/coco.names') as f:
 # or:
 # 'yolo-coco-data\\yolov3.cfg'
 # 'yolo-coco-data\\yolov3.weights'
-network = cv2.dnn.readNetFromDarknet('yolo-coco-data/yolov3.cfg',
-                                     'yolo-coco-data/yolov3.weights')
+network = cv2.dnn.readNetFromDarknet('yolo-coco-data\\yolov3.cfg','yolo-coco-data\\yolov3.weights')
 
 # Getting list with names of all layers from YOLO v3 network
 layers_names_all = network.getLayerNames()
@@ -335,7 +320,7 @@ while True:
         # r'videos\result-traffic-cars.mp4'
         # or:
         # 'videos\\result-traffic-cars.mp4'
-        writer = cv2.VideoWriter('videos/result-traffic-cars.mp4', fourcc, 30,
+        writer = cv2.VideoWriter('Results/result.mp4', fourcc, 30,
                                  (frame.shape[1], frame.shape[0]), True)
 
     # Write processed current frame to the file
