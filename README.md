@@ -1,7 +1,7 @@
 # PERCEPTION
 The entire perception stack for a self driving vehicle (SDV)  
 
-## *Object Detection* 
+## **Object Detection** 
 ## Lyft level 5 dataset
 
 Original Video | YOLO v5 Predictions
@@ -15,7 +15,7 @@ Original Video | YOLO v5 Predictions
 --- | ---
 ![KITTI_original](https://user-images.githubusercontent.com/55876739/132419729-c7f44f0c-0fea-49a1-b465-82da58dca1f9.gif) | ![KITTI_detections](https://user-images.githubusercontent.com/55876739/132419750-6283628a-df3e-4465-8c70-4c10765ffa75.gif)
 
-## *Object Tracking* 
+## **Object Tracking** 
 
 ## Lyft level 5 dataset
 
