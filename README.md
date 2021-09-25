@@ -26,7 +26,7 @@ Original Video | Deep Sort Tracking
 
 - ### KITTI Dataset
 
-Original Video | YOLO v5 Predictions
+Original Video | Deep Sort Tracking
 --- | ---
 ![KITTI_original](https://user-images.githubusercontent.com/55876739/134780100-d585b125-10f1-43ea-8e75-1d6dce2a1527.gif) | ![KITTI_detected](https://user-images.githubusercontent.com/55876739/134780104-7302e390-8527-46d4-b10d-42e32eadc9ac.gif)
 
