@@ -1,4 +1,3 @@
-# %%
 import argparse
 import time
 from pathlib import Path
@@ -201,6 +200,5 @@ if __name__ == '__main__':
                 # write the fps values from list to txt file
                 for fps_value in fps:
                     f.write(f'{fps_value:.2f}\n')
-# %%
 
     
