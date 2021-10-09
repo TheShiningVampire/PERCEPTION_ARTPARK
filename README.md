@@ -4,9 +4,7 @@
    <img width="" src="https://github.com/TheShiningVampire/PERCEPTION-ARTPARK/blob/main/PERCEPTION_Logo.png"></a>
 </p>
 </div>
-<br>
 
-# PERCEPTION
 The entire perception stack for a self driving vehicle (SDV)  
 
 ## **Object Detection** 
