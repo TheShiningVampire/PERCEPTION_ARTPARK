@@ -1,8 +1,9 @@
-!<div align="center">
+<div align="center">
 <p>
    <a align="left" href="https://github.com/TheShiningVampire/PERCEPTION-ARTPARK" target="_blank">
    <img width="" src="https://github.com/TheShiningVampire/PERCEPTION-ARTPARK/blob/main/PERCEPTION_Logo.png"></a>
 </p>
+</div>
 <br>
 
 # PERCEPTION
