@@ -1,5 +1,9 @@
-![PERCEPTION_Logo](https://user-images.githubusercontent.com/55876739/136670818-f61e8fff-08fa-47cc-af3b-53b4c9feb471.png)
-
+!<div align="center">
+<p>
+   <a align="left" href="https://github.com/TheShiningVampire/PERCEPTION-ARTPARK" target="_blank">
+   <img width="" src="https://github.com/TheShiningVampire/PERCEPTION-ARTPARK/blob/main/PERCEPTION_Logo.png"></a>
+</p>
+<br>
 
 # PERCEPTION
 The entire perception stack for a self driving vehicle (SDV)  
