@@ -1,0 +1,456 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage[demo]{graphicx}
+\usepackage{gensymb}
+\usepackage{floatrow}
+\usepackage{hyperref}
+\hypersetup{linktoc=all}
+\usepackage{blindtext}
+\usepackage{wrapfig}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{epstopdf}
+\usepackage{amssymb}
+\usepackage{gensymb}
+\usepackage{enumitem}
+\usepackage{steinmetz}
+\usepackage{amsmath}
+\usepackage{gensymb}
+\usepackage[utf8]{inputenc}
+\usepackage{fourier} 
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{caption}
+
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+    
+\begin{document}
+
+\title{Multi-Object tracking and Trajectory Prediction for Autonomous Vehicles\\
+}
+
+\author{\IEEEauthorblockN{Vinit Awale}
+  \IEEEauthorblockA{
+    \textit{Department of Electrical Engineering} \\
+    \textit{Indian Institute of Technology, Bombay}\\
+    \textit{Mumbai, India} \\
+    awale.vinit@gmail.com}
+  \and
+  \IEEEauthorblockN{Prof. Naveen Arulselvan}
+  \IEEEauthorblockA{\textit{AI \& Robotics Technology Park} \\
+    \textit{ARTPARK, IISC Bangalore}\\
+    Karnataka, India \\
+    naveen@artpark.in 
+  }
+}
+
+\maketitle
+
+\begin{abstract}
+  This document specifies the implementation details of the perception module using cameras of a self-driving car. This project was completed as a part of the Summer Internship program at ARTPARK, IISC Bangalore, under the mentorship of Prof. Naveen Arulselvan. The perception module consists of multi-object detection, tracking and trajectory prediction. The multi-object detection is based on the \textit{YOLO v5} algorithm{} \cite{YOLOv5}. We have used the \textit{ Deep Sort} algorithm for multi-object tracking based on the paper "Simple online and realtime tracking with a deep association metric". The trajectory prediction module is implemented using \textit{PEC Net} based on the paper "It is not the journey but the destination: Endpoint conditioned trajectory prediction" \cite{PECNET}. Python and PyTorch framework have been used for the code implementation.
+\end{abstract}
+
+\begin{IEEEkeywords}
+  Object detection, multi-object tracking, trajectory prediction, YOLOv5, Deep Sort, PEC Net, Autonomous vehicles
+\end{IEEEkeywords}
+
+\section{Introduction}
+Perception is a central problem for any autonomous agent, be it humans, robots or self-driving vehicles. This module helps for a smoother and more reliable control of the car using the path-planning module of the autonomous agent. It can also aid in pose estimation. For our project, we have included the following sub-modules for the perception:
+\begin{itemize}
+  \item Multi-object detection using the \textit{YOLOv5} algorithm.
+  \item Multi-object tracking using the \textit{Deep Sort} algorithm.
+  \item Trajectory prediction using the \textit{PEC Net} algorithm.
+\end{itemize} \\
+Object detection in the context of autonomous driving refers to detecting the objects present in the scene (making use of the camera sensors on the autonomous vehicle) by making bounding boxes surrounding the detected objects. This is followed by identifying the class of the objects. The family of YOLO (You Only Look Once) models are the most popular object detection models for autonomous driving. The YOLOv5 model is a state-of-the-art object detection model that is capable of detecting 80 classes of objects. The model is trained on the MS COCO dataset, containing over 1.2 million images and over 20,000 bounding boxes for the 80 classes of objects. \\
+Multi-object tracking refers to the problem of tracking the objects detected across frames. For this project, we are implementing the \textit{Deep Sort} algorithm for tracking the bounding boxes. Simple Online Realtime Tracking \textit{SORT} is an approach of multi-object tracking using simple and effective algorithms such as Kalman Filter. Including an association metric (using deep learning) for the detected object across frames leads to a more robust and accurate multi-object tracking called Deep Sort. \\
+The problem of trajectory prediction (as is already apparent from the name) involves predicting the agents detected by the YOLOv5 model. PEC Net uses an encoder-decoder architecture for predicting the agents detected by the YOLOv5 model. The encoder is a neural network that encodes the input image into a vector of fixed size. The decoder is a fully connected neural network that decodes the vector into a high-dimensional vector. For the implementation of PEC Net, we need an aerial view of the scene. However, we are working with datasets of camera images taken in the ego-centric view in our implementation. Hence for a complete end-to-end perception pipeline, we need to move the detections of our object detection module to birds-eye view. This is a part of future work. \\
+The code for the project is available at \url{https://github.com/TheShiningVampire/PERCEPTION_ARTPARK}
+
+\section{Background and Related Works}
+\subsection{Object Detection}
+The problem of object detection and object tracking is quite well known in the field of computer vision. Modern Object detectors are composed of two main components:
+\begin{itemize}
+  \item The backbone: This is the part of the detector that is responsible for extracting the features of the objects in the image using a deep convolutional neural network.
+  \item The head: This is the part of the detector that is responsible for classifying the objects in the image.
+\end{itemize}
+
+On the basis of head component, we have two main approaches for object detection:
+\begin{itemize}
+  \item Two stage Object Detector: This approach leads to high localization and object detection accuracy of the results. \\
+        Example: R-CNN, fast R-CNN, faster R-CNN, R-FCN, Libra R-CNN, etc
+  \item One stage Object Detector: This approach leads to a higher reference speed. \\
+        Example: SSD, YOLO, RetinaNet, etc
+\end{itemize}
+
+We have chosen the One-stage Object Detector approach since we need a higher reference speed for autonomous driving applications. Specifically, we have used YOLO detection for our application.
+
+\subsection{Multi-Object Tracking}
+Multi-object tracking methods usually include a tracking network and a detection network. The tracking network is responsible for updating the position and orientation of the object in the scene. The detection network is responsible for detecting the object in the scene. The tracking network is responsible for the data association across the frames.  \\
+The detections from the object detector can be processed in one of the following ways:
+\begin{itemize}
+  \item Batch method: In this approach, the data association problem is solved by storing the image frames with detections in a batch. The batch is then processed one by one. \\
+  \item Online method: In this approach, the data association problem is solved by processing an image frame with a detection one at a time. \\
+\end{itemize}
+
+Practically, the batch method performs better than online methods for the tracking network. However, the batch method is computationally expensive, which means that the tracking network needs to process the entire batch of detections before starting the next frame. Hence, this approach is not viable for our project. Therefore, we have chosen the online method for our project. \\
+Famous object tracking methods include:\\
+KCF tracker, SORT tracker, MOSSE, KCF+SORT, MOSSE+KCF, MOSSE+KCF+SORT, MedianFlow, etc. \\
+
+For our project, we have chosen the Deep SORT, an online multi-object tracking algorithm that incorporates a deep association metric for the tracking network.
+
+\subsection{Trajectory Prediction}
+Amongst all the tasks mentioned, the trajectory prediction is the most challenging one. The trajectory prediction is the task of predicting the future trajectory of the object. The challenges in trajectory prediction are:
+\begin{itemize}
+\item Destination is an intrinsic parameter of the agent.\\
+The agents in the surrounding have some end goal to be achieved, however, we can never know the exact end goal of the agent until it is achieved.
+\item Agent Environment interactions. \\
+The agent interacts with the environment and hence the trajectory taken is affected by it.
+\item Agent-agent interactions. \\
+The agents also interact among themselves and hence the trajectory taken is affected in such a way that all the agents move in a socially compliant manner.
+\item Personal preferences. \\
+Apart from all the challenges mentioned above, the agent has some personal preferences that affect the trajectory taken.\\
+\end{itemize}
+However, there have been several approaches for trajectory prediction in the past. These include:
+\begin{itemize}
+\item Social Force  Model (1998)\\
+In this model, interactions among the agents and the environment are taken into account by modelling them as forces. And the trajectory of a particular agent is predicted based on the forces acting on it by using Newton's laws.
+\item LSTM
+In this model the output of each agent is obtained by a LSTM network. The LSTM network is trained to predict the future trajectory of the agent based on the past trajectory of the agent.
+\item Social LSTM
+This model was an improvement over the basic LSTM model. In this model social interactions were also incorporated in the LSTM network.
+\end{itemize}
+\\
+For this project we will be using the PEC Net architecture (abbreviation for the term Predicted Endpoint Conditioned Network) for trajectory prediction.\\
+
+
+\section{Datasets}
+Autonomous driving is an emerging field; hence there are limited datasets that can be used for training and testing which would resemble the real world. The datasets that we have used for our project are:
+\begin{itemize}
+  \item Lyft level 5 Prediction dataset \cite{ Lyft} \\
+        This is a self-driving dataset for motion prediction, containing over 1,000 hours of data. This was collected by a fleet of 20 autonomous vehicles along a fixed route in Palo Alto, California, over a four-month period. It consists of 170,000 scenes, where each scene is 25 seconds long and captures the perception output of the self-driving system, which encodes the precise positions and motions of nearby vehicles, cyclists, and pedestrians over time.
+  \item KITTI dataset \cite{KITTI} \\
+        The dataset comprises of Raw (unsynced+unrectified) and processed (synced+rectified) color stereo sequences (0.5 Megapixels, stored in png format), captured and synchronized at 10 Hz. This dataset was only used for testing the perception modules of our project. \\
+        Along with camera sequences, the dataset also contains 3D Velodyne point clouds, 3D GPS/IMU data and 3D object tracklet labels. All of these will be useful for the proposed future works of the project. \\
+\end{itemize}
+\section{Procedure, Experiments and Results}
+\subsection{Object detection}
+\subsubsection{\textbf{YOLO algorithm}}
+YOLO is an abbreviation for the term ‘You Only Look Once’. This is an algorithm that detects and recognizes various objects in a picture (in real-time). Object detection in YOLO is done as a regression problem and provides the class probabilities of the detected images. YOLO algorithm employs convolutional neural networks (CNN) to detect objects in real-time. As the name suggests, the algorithm requires only a single forward propagation through a neural network to detect objects.
+\subsubsection*{\textbf{Working of YOLO}}
+In this subsection we will discuss the working of YOLO algorithm in brief.
+\begin{itemize}
+  \item First split the image into smaller S x S grid cells. This S is a hyper-parameter that can be tuned to improve the performance of the algorithm. However, the larger the S, the more computationally expensive the algorithm will be but the results will be more accurate. In the original paper, the S is set to 7 (as shown in the following figure).
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.95\linewidth]{Images/yolo_1.png}
+        \end{figure}
+  \item For each grid cell make predictions of B bounding boxes $(x_{centre },y_{centre} ,width, height)$ and confidence for each bounding box (P[object]). The value of B was set to 2 in the original paper. Here, multiple bounding boxes are predicted for each grid cell. This helps in the case when a single grid cell has the center of multiple objects. However, as the number of grid cells (B) increases, the probability that multiple objects are detected in a single grid cell decreases.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.95\linewidth]{Images/yolo_2.png}
+        \end{figure}
+  \item Along with this the model also predicts conditional class probability (out of the C classes) i.e. $P[class_i|object]$ for each grid cell.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.95\linewidth]{Images/yolo_3.png}
+        \end{figure}
+  \item The model then predicts the class label for each bounding box using Bayes Theorem
+        \begin{equation*}
+          P[class_i] = P[class_i|object] * P[object]
+        \end{equation*}
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.5\linewidth]{Images/yolo_4.png}
+        \end{figure}
+\end{itemize}
+From the above image we can see that there are several bounding boxes detected for each class. Now, to get rid of these bounding boxes, we need to apply non-maximal suppression.
+\subsubsection*{\textbf{Non-maximal suppression}}
+The steps involved in applying non-maximal suppression are as follows:
+\begin{itemize}
+  \item Find the IoU (Intersection over Union) for all the bounding boxes of the same class.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.5\linewidth]{Images/iou.png}
+        \end{figure}
+  \item Keep the bounding box  with maximum class
+        probability and discard other bounding boxes with IoU > threshold.
+\end{itemize}
+Hence, using this we get rid of the multiple bounding boxes of the same class and only preserve the one with the highest class probability. Finally, the result we obtain is shown in the following figure.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\linewidth]{Images/yolo_5.png}
+\end{figure}
+
+\subsubsection*{\textbf{Architecture of YOLO}}
+The architecture of YOLO is shown in the following figure.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/YOLO_architecture.png}
+\end{figure}
+
+The architecture of YOLO comprises of 24 convolutional layers followed by 2 fully connected layers. In the architecture, alternating $1\times 1$  convolutional layers reduce the feature space from the preciding layers. In the original paper the architecture  was trained on the ImageNet dataset with all the images resized to 224 x 224 pixels.
+
+\subsubsection*{\textbf{Loss Function}}
+The loss function used while training the YOLO model is as follows:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{Images/yolo_loss.png}
+\end{figure}
+where, $\mathbb{1} _{i}^{obj}$  denotes if object appears in cell i and $\mathbb{1} _{ij}^{obj}$ denotes that the jth bounding box predictor in cell i is “responsible” for that prediction.  \\
+The first two terms in the loss function correspond to the localization loss. The next two terms correspond to the confidence loss. The last term is the classification loss.
+
+\subsubsection{\textbf{YOLO v5}}
+For our project we have used pretrained YOLOv5 model, which is an improve version of the basic YOLO architecture. Since, we decided to implement the entire module using PyTorch, we decided to change the object detection sub module to YOLOv5 written in PyTorch from YOLOv3 which has been implemented using the Darknet framework. Also, according to various studies \cite{YOLOv5comparision} regarding the comparison of the two models, it has been found that YOLO v5 is the most optimal model for deployment due to its speed and accuracy.
+Following is the result of one frame on the Lyft dataset when the YOLOv5 algorithm was implemented on it.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{Images/YOLOv5_ip.png}
+  \caption{Original camera frame from the Lyft Level 5 dataset}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{Images/YOLOv5_op.png}
+  \caption{Result of YOLO v5 object detection}
+\end{figure}
+
+When implemented on the KITTI dataset, the results we as follows:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/YOLOv5_Kitti_ip.png}
+  \caption{Original camera frame from the KITTI dataset}
+
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/YOLOv5_Kitti_op.png}
+  \caption{Result of YOLO v5 object detection}
+\end{figure}
+
+\subsubsection*{\textbf{FPS obtained}}
+We tested the Object detection module on KITTI dataset and the Lyft Level 5 dataset. Also, two GPUs were used for testing. One being Nvidia Geforce RTX 3060 (mobile) GPU and the other being Nvidia Tesla T4 GPU (server). The following table shows the FPS obtained on the KITTI dataset.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/YOLO_fps.png}
+\end{figure}
+
+\subsection{Multi-Object Tracking}
+For this project, we have implemented Deep SORT algorithm for multi-object tracking. The algorithm is based on the paper \cite{Deep_sort} which is a state-of-the-art algorithm for multi-object tracking. Now, let us look at the working of the algorithm.
+
+\subsubsection*{\textbf{Working Deep Sort}}
+The tasks included in the implementation of Deep SORT are as follows:\\
+\begin{itemize}
+  \item OBJECT DETECTION \\
+        We have already implemented YOLO v5 algorithm for the object detection tasks
+
+
+  \item ESTIMATION OF THE BOUNDING BOXES OF THE OBJECTS IN IMAGE SPACE \\
+        We assume a very general tracking scenario where the camera is uncalibrated and where we have no ego-motion information available. We use a Standard Kalman Filter with constant velocity motion and linear observation model on a eight dimensional space $(x,y,\gamma, h, \dot{x}, \dot{y}, \dot{\gamma}, \dot{h}) $
+
+  \item ASSIGNMENT PROBLEM\\
+        We solve the association problem using the Hungarian Algorithm. For that we need to form a cost matrix using an association metric. Deep Sort incorporates two association metrics which are as follows:
+        \begin{itemize}
+          \item Motion Information \\
+                To incorporate the motion information, we use the Mahalanobis distance between the predicted and the newly measured bounding boxes.
+                \begin{equation*}
+                  d^1(i,j) = (d_j - y_i)^T \Sigma^{-1} (d_j - y_i)
+                \end{equation*}
+                where, $d_j$ is the predicted bounding box and $y_i$ is the newly measured bounding box. The $\Sigma$ matrix is the covariance matrix of the motion model. The Mahalanobis distance is a robust distance metric in the case when there is correlation between the n-dimensional vectors.
+
+          \item Apperance Information \\
+                For each bounding box detection dj we compute an appearance descriptor rj with  $\Vert r_j \Vert  = 1$. To find these appearance descriptors we use a CNN architecture that has been trained on a large-scale person re-identiﬁcation dataset that contains over 1,100,000 images of 1,261 pedestrians.
+                \begin{figure}[H]
+                  \centering
+                  \includegraphics[width=0.8\linewidth]{Images/Deep_SORT_architecture.png}
+                  \caption{CNN architecture used for feature extraction}
+                \end{figure}
+
+                Further, we keep a gallery $(R_k)$ of past 100 associated appearance descriptor for each track (k).
+                Then, our second metric measures the smallest cosine distance between the ith track and jth detection in appearance space.
+                \begin{equation*}
+                  d^2(i,j) = \min {1 - r_j^T r_k^(i) | r_k^(i) \in R_k}
+                \end{equation*}
+                where, $r_j$ is the appearance descriptor of the jth detection and $r_k^(i)$ is the ith track in the gallery.
+                \\
+                To build the association problem we combine both metrics using a convex combination.
+                \begin{equation*}
+                  c_{ij} = \alpha d^1(i,j) + (1-\alpha) d^2(i,j)
+                \end{equation*}
+                We call an association admissible if it is within the gating region of both metrics:
+                \begin{equation*}
+                  b_{ij} = \prod \limits_{m = 1}^{2} b_{i,j}^{(m)}
+                \end{equation*}
+                where, $b_{i,j}^{(m)}$ is the gating region of the $m$th metric.
+                \begin{equation*}
+                  b_{i,j}^{(m)} = \mathbb{1}[d^m(i,j) \leq t^{(m)}]
+                \end{equation*}
+                where, $t^{(m)}$ is the threshold of the $m$th metric.
+        \end{itemize}
+  \item TRACKING HANDLING \\
+        For each track k we count the number of frames since the last successful measurement association . This counter is  incremented during Kalman ﬁlter prediction and reset to 0 when the track has been associated with a measurement. Tracks that exceed a predeﬁned maximum age $A_{max}$ are considered to have left the scene and are deleted from the track set. New track hypotheses are initiated for each detection that cannot be associated to an existing track. These new tracks are classiﬁed as tentative during their ﬁrst three frames.
+\end{itemize}
+
+\subsubsection*{\textbf{Results}}
+\\
+When implemented on the sample dataset, the results we as follows:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{Images/Deep_test_ip.png}
+  \caption{Original camera frame from the sample dataset}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{Images/Deep_test_op.png}
+  \caption{Result of Deep Sort tracking}
+\end{figure}
+
+When tested on the KITTI dataset, the results we as follows:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/Deep_KITTI_ip.png}
+  \caption{Original camera frame from the KITTI dataset}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/Deep_KITTI_op.png}
+  \caption{Result of Deep Sort tracking on KITTI dataset}
+\end{figure}
+
+When tested on the Lyft Level 5 dataset, the results we as follows:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/Deep_Lyft_ip.png}
+  \caption{Original camera frame from the Lyft Level 5 dataset}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/Deep_Lyft_op.png}
+  \caption{Result of Deep Sort tracking on Lyft Level 5 dataset}
+\end{figure}
+
+\subsubsection*{\textbf{FPS obtained}} \\
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/Deep_fps.png}
+  \caption{FPS obtained using Deep Sort}
+\end{figure}
+
+We can easily observe that the FPS obtained after object tracking is roughly the half of the FPS obtained after simple object detection.
+
+\section{Trajectory Prediction}
+\subsection{Modelling the problem}
+Given sequence of observations:
+\begin{equation*}
+  X_i^t = (x_i^t,x_i^t ) \quad \quad for \quad t = 1,2,3,...,T^{obs}
+\end{equation*}
+Tasks to be done:
+\begin{itemize}
+  \item Make prediction of the trajectory until the next $T^{pred}$ frames.
+        \begin{equation*}
+          \hat{Y}_i^t = \mathcal{F}(X_i^{t}) \quad \quad for \quad t = T^{obs},...,T^{pred}
+        \end{equation*}
+        Such that it is as close as possible to the actual trajectory.
+        \begin{equation*}
+          Y_i^t = \mathcal{F}(X_i^{t}) \quad \quad for \quad t = T^{obs},...,T^{pred}
+        \end{equation*}
+\end{itemize}
+
+\subsubsection*{\textbf{Approach}} \\
+The approach used by PEC Net for trajectory prediction can be understood from the following images:
+\begin{itemize}
+  \item We know the past trajectory of the agent as shown below and we attempt to predict the future trajectory of the agent.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=\linewidth]{Images/PEC_1.png}
+        \end{figure}
+  \item We first try to find the multi modal distribution of the agent's possible endpoint. (We are basically trying to model the intent of the agent in this step)
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=\linewidth]{Images/PEC_2.png}
+        \end{figure}
+  \item From the generated distribution we sample some of the possible endpoint and then conditioned on the past trajectory, we try to predict the future trajectory.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=\linewidth]{Images/PEC_3.png}
+        \end{figure}
+  \item Further we use a social pooling layer so that all the predicted trajectories of the  agents in the scene are socially compliant.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=\linewidth]{Images/PEC_4.png}
+        \end{figure}
+\end{itemize}
+
+\subsubsection*{\textbf{Architecture of PEC Net}}
+
+The architecture of PEC Net is as follows:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/PEC_architecture.png}
+  \caption{Architecture of PEC Net}
+\end{figure}
+The various blocks in the PEC Net architecture can be understood as:
+\begin{itemize}
+\item \textbf{While training} \\
+\begin{itemize}
+  \item We first encode past trajectory and Ground truth information
+  \item Concatenate and Encode to CVAE latent space with the encoder.
+  \item Decode the sampled latent vector with CVAE decoder conditioned on the past trajectory encoding
+  \item  Re-encode estimated endpoints and form pool vectors for neighbours.
+  \item Pool context for neighbours with social pooling module.
+  \item Jointly predict the future positions for all the neighbours with social context pooled information
+\end{itemize}
+
+\item \textbf{While inference}\\
+Since while inference we do not have the information of the ground truth trajectory all the blocks including the ground truth information are removed. In fig. 13, these blocks correspond to the ones connected with a red arrow. All of these block are not used during Inference.
+\\
+The exact steps for inference are as follows:
+\begin{itemize}
+\item Encode past trajectory
+\item Decode the sampled latent vector with CVAE decoder conditioned on the past trajectory encoding
+\item Re-encode estimated endpoints and form pool vectors for neighbours.
+\item Pool context for neighbours with social pooling module.
+\item Jointly predict the future positions for all the neighbours with social context pooled information
+\end{itemize}
+\end{itemize}
+Please refer to the original paper\cite{PECNET} for the mathematical details.
+
+\subsubsection*{\textbf{Results}} \\
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/PECNet_results.png}
+  \caption{Results of PEC Net}
+\end{figure}
+The above are the results obtained using PEC Net on the Stanford Drone dataset. We have been unable to use PEC Net on our datasets since our datasets consists of images from the ego-centric, however, PEC Net requires them to be in Aerial perspective.
+
+\section{Applications and Future work}
+Firstly, since this project was a part of remote summer internship, none of the implementations have been tried on a real autonomous system. Hence, this is to be done in the future work for this project. As mentioned earlier the PEC Net architecture hasn't been used on our datasets since our datasets consists of images from the ego-centric, however, PEC Net requires them to be in Aerial perspective. Hence, projecting our obtained detections to the Birds-eye view is view is one of the possible way to overcome this problem. Also, we have only used camera as our primary sensor. Using other sensors like lidar or radar is also possible. Fusing the information from multiple sensors is also possible. The final aim of such a pipeline is to make the agent more social and more autonomous. This can be achieved by making an intent prediction subsystem, which may use Reinforcement Learning techniques to learn the intent of the agent. \\
+With all the possible directions in which this project can be carried forward, there are also several applications to the tasks that have been accomplished in this project. The tasks accomplished in this project will supplement other subsystems of a self-driving car such as localization and path-planning. Also, it can be used for surveillance applications. \\
+
+
+
+\section{Acknowledgment}
+I would like to thank ARTPARK to present me with the opportunity of working on this project. Also, I will like to thank Prof. Naveen Arulselvan for guiding me through this project.
+
+
+\bibliographystyle{plain}
+\bibliography{cite.bib}
+
+
+\end{document}
