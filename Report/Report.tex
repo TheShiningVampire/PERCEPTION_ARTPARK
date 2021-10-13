@@ -7,7 +7,30 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
-
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage[demo]{graphicx}
+\usepackage{gensymb}
+\usepackage{floatrow}
+\usepackage{hyperref}
+\hypersetup{linktoc=all}
+\usepackage{blindtext}
+\usepackage{wrapfig}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{epstopdf}
+\usepackage{amssymb}
+\usepackage{gensymb}
+\usepackage{enumitem}
+\usepackage{steinmetz}
+\usepackage{amsmath}
+\usepackage{gensymb}
+\usepackage[utf8]{inputenc}
+\usepackage{fourier} 
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{caption}
 
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -99,7 +122,130 @@ Autonomous driving is an emerging field; hence there are limited datasets that c
 \end{itemize}
 \section{Procedure, Experiments and Results}
 \subsection{Object detection}
-\subsubsection{YOLOv3}
+\subsubsection{\textbf{YOLO algorithm}}
+YOLO is an abbreviation for the term ‘You Only Look Once’. This is an algorithm that detects and recognizes various objects in a picture (in real-time). Object detection in YOLO is done as a regression problem and provides the class probabilities of the detected images. YOLO algorithm employs convolutional neural networks (CNN) to detect objects in real-time. As the name suggests, the algorithm requires only a single forward propagation through a neural network to detect objects.
+\subsubsection*{\textbf{Working of YOLO}}
+In this subsection we will discuss the working of YOLO algorithm in brief.
+\begin{itemize}
+  \item First split the image into smaller S x S grid cells. This S is a hyperparameter that can be tuned to improve the performance of the algorithm. However, the larger the S, the more computationally expensive the algorithm will be but the results will be more accurate. In the original paper, the S is set to 7 (as shown in the following figure).
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.95\linewidth]{Images/yolo_1.png}
+        \end{figure}
+  \item For each grid cell make predictions of B bounding boxes (xcentre ,ycentre ,width, height) and confidence for each bounding box (P[object]). The value of B was set to 2 in the original paper. Here, multiple bounding boxes are predicted for each grid cell. This helps in the case when a single grid cell has the center of multiple objects. However, as the number of grid cells (B) increases, the probability that multiple objects are detected in a single grid cell decreases.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.95\linewidth]{Images/yolo_2.png}
+        \end{figure}
+  \item Along with this the model also predicts conditional class probability (out of the C classes) i.e. $P[class_i|object]$ for each grid cell.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.95\linewidth]{Images/yolo_3.png}
+        \end{figure}
+  \item The model then predicts the class label for each bounding box using Bayes Theorem
+        \begin{equation*}
+          P[class_i] = P[class_i|object] * P[object]
+        \end{equation*}
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.5\linewidth]{Images/yolo_4.png}
+        \end{figure}
+\end{itemize}
+From the above image we can see that there are several bounding boxes detected for each class. Now, to get rid of these bounding boxes, we need to apply non-maximal suppression.
+\subsubsection*{\textbf{Non-maximal suppression}}
+The steps involved in applying non-maximal suppression are as follows:
+\begin{itemize}
+  \item Find the IoU (Intersection over Union) for all the bounding boxes of the same class.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.5\linewidth]{Images/iou.png}
+        \end{figure}
+  \item Keep the bounding box  with maximum class
+        probability and discard other bounding boxes with IoU > threshold.
+\end{itemize}
+Hence, using this we get rid of the multiple bounding boxes of the same class and only preserve the one with the highest class probability. Finally, the result we obtain is shown in the following figure.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\linewidth]{Images/yolo_5.png}
+\end{figure}
+
+\subsubsection*{\textbf{Architecture of YOLO}}
+The architecture of YOLO is shown in the following figure.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/YOLO_architecture.png}
+\end{figure}
+
+The architecture of YOLO comprises of 24 convolutional layers followed by 2 fully connected layers. In the architecture, alternating $1\times 1$  convolutional layers reduce the feature space from the preciding layers. In the original paper the architecture  was trained on the ImageNet dataset with all the images resized to 224 x 224 pixels.
+
+\subsubsection*{\textbf{Loss Function}}
+The loss function used while training the YOLO model is as follows:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{Images/yolo_loss.png}
+\end{figure}
+where, $\mathbb{1} _{i}^{obj}$  denotes if object appears in cell i and $\mathbb{1} _{ij}^{obj}$ denotes that the jth bounding box predictor in cell i is “responsible” for that prediction.  \\
+The first two terms in the loss function correspond to the localization loss. The next two terms correspond to the confidence loss. The last term is the classification loss.
+
+\subsubsection{\textbf{YOLO v5}}
+For our project we have used pretrained YOLOv5 model, which is an improve version of the basic YOLO architecture. Since, we decided to implement the entire module using PyTorch, we decided to change the object detection sub module to YOLOv5 written in PyTorch from YOLOv3 which has been implemented using the Darknet framework. Also, according to various studies \cite{YOLOv5comparision} regarding the comparison of the two models, it has been found that YOLO v5 is the most optimal model for deployment due to its speed and accuracy.
+Following is the result of one frame on the Lyft dataset when the YOLOv5 algorithm was implemented on it.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{Images/YOLOv5_ip.png}
+  \caption{Original camera frame from the Lyft Level 5 dataset}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{Images/YOLOv5_op.png}
+  \caption{Result of YOLO v5 object detection}
+\end{figure}
+
+When implemented on the KITTI dataset, the results we as follows:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/YOLOv5_Kitti_ip.png}
+  \caption{Original camera frame from the KITTI dataset}
+
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/YOLOv5_Kitti_op.png}
+  \caption{Result of YOLO v5 object detection}
+\end{figure}
+
+\subsubsection*{\textbf{FPS obtained}}
+We tested the Object detection module on KITTI dataset and the Lyft Level 5 dataset. Also, two GPUs were used for testing. One being Nvidia Geforce RTX 3060 (mobile) GPU and the other being Nvidia Tesla T4 GPU (server). The following table shows the FPS obtained on the KITTI dataset.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Images/YOLO_fps.png}
+\end{figure}
+
+\subsection{Multi-Object Tracking}
+For this project, we have implemented Deep SORT algorithm for multi-object tracking. The algorithm is based on the paper \cite{Deep_sort} which is a state-of-the-art algorithm for multi-object tracking. Now, let us look at the working of the algorithm.
+
+\subsubsection*{\textbf{Working Deep Sort}}
+The tasks included in the implementation of Deep SORT are as follows:\\
+\begin{itemize}
+\item OBJECT DETECTION \\
+We have already implemented YOLO v5 algorithm for the object detection tasks
+
+
+\item ESTIMATION OF THE BOUNDING BOXES OF THE OBJECTS IN IMAGE SPACE \\
+We assume a very general tracking scenario where the camera is uncalibrated and where we have no ego-motion information available. We use a Standard Kalman Filter with constant velocity motion and linear observation model on a eight dimensional space $(x,y,\gamma, h, \dot{x}, \dot{y}, \dot{\gamma}, \dot{h}) $
+
+\item ASSIGNMENT PROBLEM\\
+We solve the association problem using the Hungarian Algorithm. For that we need to form a cost matrix using an association metric. Deep Sort incorporates two association metrics.
+\begin{itemize}
+\item Motion Information \\
+To incorporate the motion information, we use the Mahalanobis distance between the predicted and the newly measured bounding boxes.
+\begin{equation*}
+d^1(i,j) = (d_j - y_i)^T \Sigma^{-1} (d_j - y_i)
+\end{equation*}
+where, $d_j$ is the predicted bounding box and $y_i$ is the newly measured bounding box. The $\Sigma$ matrix is the covariance matrix of the motion model. The Mahalanobis distance is a robust distance metric in the case when there is correlation between the n-dimensional vectors.
 
 
 
