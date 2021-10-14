@@ -43,7 +43,12 @@ we have included the following sub-modules for the perception:
 - Multi-object detection using the YOLOv5 algorithm
 - Multi-object tracking using the Deep Sort algorithm
 - Trajectory prediction using the PEC Net algorithm
+
+The codes have been tried on Windows 10 and Windows 11 with Torch 1.9.0 and Cuda 11.1 on Nvidia Geforce RTX 3060 GPU.
 ## :trophy: Results obtained <a name = "results"></a>
+
+The models were tried on Lyft level 5 dataset and the KITTI dataset.
+The results obtained on the model are as follows:
 ## **Object Detection** 
 - ### Lyft level 5 dataset
 
@@ -57,6 +62,12 @@ Original Video | YOLO v5 Predictions
 Original Video | YOLO v5 Predictions
 --- | ---
 ![KITTI_original](https://user-images.githubusercontent.com/55876739/132419729-c7f44f0c-0fea-49a1-b465-82da58dca1f9.gif) | ![KITTI_detections](https://user-images.githubusercontent.com/55876739/132419750-6283628a-df3e-4465-8c70-4c10765ffa75.gif)
+
+The FPS obtained after object detection are as follows:
+|     | *Lyft level 5 dataset* | *KITTI Dataset* |
+|     | Avg FPS | Min FPS    | Avg FPS | Min FPS |
+| --- | ---     | ---        |  ---    | ---     |  
+
 
 
 
