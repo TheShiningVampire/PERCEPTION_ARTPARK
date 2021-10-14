@@ -150,6 +150,8 @@ git clone https://github.com/TheShiningVampire/PERCEPTION_ARTPARK
 cd PERCEPTION_ARTPARK
 pip install -r requirements.txt
 ```
+
+## 🎈 Usage <a name="usage"></a>
 ### Object Detection
 * Run the object detection model
 ```
