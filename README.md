@@ -44,7 +44,7 @@ we have included the following sub-modules for the perception:
 - Multi-object tracking using the Deep Sort algorithm
 - Trajectory prediction using the PEC Net algorithm
 
-The codes have been tried on Windows 10 and Windows 11 with Torch 1.9.0 and Cuda 11.1 on Nvidia Geforce RTX 3060 GPU.
+The codes have been tried on Windows 10 and Windows 11 with Torch 1.9.0 and Cuda 11.1 on NVIDIA GeForce RTX 3060 GPU.
 ## :trophy: Results obtained <a name = "results"></a>
 
 The models were tried on Lyft level 5 dataset and the KITTI dataset.
