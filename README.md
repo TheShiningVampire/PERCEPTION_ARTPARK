@@ -25,14 +25,9 @@
 - [About](#about)
 - [Results](#results)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
 - [Usage](#usage)
-- [Built Using](#built_using)
-- [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
-- [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
-
+- [Link to Results](#result_link)
 ## 🧐 About <a name = "about"></a>
 Perception is a central problem for any autonomous
 agent, be it humans, robots or self-driving vehicles. This
@@ -195,6 +190,6 @@ python track.py --source 0 --yolo_weights yolov5x6.pt --img 1280  # largest yolo
 - HarshayuGirase (Codes for PECNet are modified from the original codes by HarshayuGirase)
 
 
-## :link: Link to Results
+## :link: Link to Results <a name = "result_link"></a>
 
 All the results obtained can be found in the [Google Drive](https://drive.google.com/drive/folders/1l3J2DoIQZ52VDvhxMWD95VKINWJgvWmY?usp=sharing)
