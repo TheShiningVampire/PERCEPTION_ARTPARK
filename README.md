@@ -64,13 +64,33 @@ Original Video | YOLO v5 Predictions
 ![KITTI_original](https://user-images.githubusercontent.com/55876739/132419729-c7f44f0c-0fea-49a1-b465-82da58dca1f9.gif) | ![KITTI_detections](https://user-images.githubusercontent.com/55876739/132419750-6283628a-df3e-4465-8c70-4c10765ffa75.gif)
 
 The FPS obtained after object detection are as follows:
-|     | Lyft level 5 dataset | | KITTI Dataset | |
-|     | Avg FPS | Min FPS    | Avg FPS | Min FPS |
-| --- | ---     | ---        |  ---    | ---     | 
 
-
-
-
+<table>
+  <tr>
+    <td> </td>
+    <td colspan="2">Lyft Level 5 Dataset</td>
+    <td colspan="2">KITTI Dataset</td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td>Avg FPS</td> <td> Min FPS</td>
+    <td>Avg FPS</td> <td> Min FPS</td>
+  </tr>
+  <tr>
+    <td>NVIDIA GeForce RTX 3060 mobile GPU</td>
+    <td>22.19</td>
+    <td>14.33</td>
+    <td>25.86</td>
+    <td>16.13</td>
+  </tr>
+  <tr>
+    <td>NVIDIA Telsa T4 GPU</td>
+    <td>30.15</td>
+    <td>21.88</td>
+    <td>31.35</td>
+    <td>19.27</td>
+  </tr>
+</table>
 
 ## **Object Tracking** 
 
