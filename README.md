@@ -107,6 +107,36 @@ Original Video | Deep Sort Tracking
 --- | ---
 ![KITTI_original](https://user-images.githubusercontent.com/55876739/134780100-d585b125-10f1-43ea-8e75-1d6dce2a1527.gif) | ![KITTI_detected](https://user-images.githubusercontent.com/55876739/134780104-7302e390-8527-46d4-b10d-42e32eadc9ac.gif)
 
+The FPS obtained after object detection are as follows:
+
+<table>
+  <tr>
+    <td> </td>
+    <td colspan="2">Lyft Level 5 Dataset</td>
+    <td colspan="2">KITTI Dataset</td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td>Avg FPS</td> <td> Min FPS</td>
+    <td>Avg FPS</td> <td> Min FPS</td>
+  </tr>
+  <tr>
+    <td>NVIDIA GeForce RTX 3060 mobile GPU</td>
+    <td>12.96</td>
+    <td>8.72</td>
+    <td>13.14</td>
+    <td>7.21</td>
+  </tr>
+  <tr>
+    <td>NVIDIA Telsa T4 GPU</td>
+    <td>14.19</td>
+    <td>11.69</td>
+    <td>14.04</td>
+    <td>9.36</td>
+  </tr>
+</table>
+
+
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
