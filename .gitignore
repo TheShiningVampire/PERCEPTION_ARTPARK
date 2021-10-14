@@ -9,11 +9,8 @@
 *.user
 *.userosscache
 *.sln.docstates
-*.avi
-*.mp4
 *.jpeg
 *.png
-*.gif
 *.pt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -353,3 +350,14 @@ Object_detection/YOLOv3/yolo-coco-data/yolov3.weights
 PERCEPTION FOR A SELF DRIVING CAR.pptx
 ARTAPARK.pptx
 Object_tracking/Yolov5_DeepSort_Pytorch/fps.txt
+Results/DeepSort/KITTI/KITTI.mp4
+Results/DeepSort/Lyft/Scene_one_tracked.mp4
+Results/DeepSort/Lyft/Scene_one_tracked2.mp4
+Results/DeepSort/Lyft/Scene_one.mp4
+Results/YOLOv5/KITTI/KITTI_detections.mp4
+Results/DeepSort/KITTI/KITTI_tracked.mp4
+.gitignore
+Results/YOLOv5/Lyft/Lyft_level5_original.mp4
+.gitignore
+Results/YOLOv5/KITTI/KITTI_original.mp4
+Results/YOLOv5/Lyft/Lyft-level5_detections.mp4
