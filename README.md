@@ -141,7 +141,14 @@ The FPS obtained after object detection are as follows:
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+1. Clone the repository
+```
+git clone https://github.com/TheShiningVampire/PERCEPTION_ARTPARK
+```
+2. Install the required dependencies
+```
+pip install -r requirements.txt
+```
 
 ### Prerequisites
 
