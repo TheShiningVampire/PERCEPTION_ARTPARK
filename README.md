@@ -44,7 +44,7 @@ we have included the following sub-modules for the perception:
 - Multi-object tracking using the Deep Sort algorithm
 - Trajectory prediction using the PEC Net algorithm
 
-The codes have been tried on Windows 10 and Windows 11 with Torch 1.9.0 and Cuda 11.1 on NVIDIA GeForce RTX 3060 GPU.
+The codes have been tried on Windows 10 and Windows 11 with Python 3.8, Torch 1.9.0 and Cuda 11.1 on NVIDIA GeForce RTX 3060 GPU.
 ## :trophy: Results obtained <a name = "results"></a>
 
 The models were tried on Lyft level 5 dataset and the KITTI dataset.
@@ -147,34 +147,50 @@ git clone https://github.com/TheShiningVampire/PERCEPTION_ARTPARK
 ```
 2. Install the required dependencies
 ```
+cd PERCEPTION_ARTPARK
 pip install -r requirements.txt
 ```
+### Object Detection
+* Run the object detection model
+```
+cd Object_detection\yolov5
+python detect.py --source ... --show-vid    # Show live inference as a video
+```
+- The --source argument can be either of these:
+  - Video:  `--source file.mp4`
+   - Webcam:  `--source 0`
+   - RTSP stream:  `--source rtsp://170.93.143.139/rtplive/470011e600ef003a004ee33696235daa`
+   - HTTP stream:  `--source http://wmccpinetop.axiscam.net/mjpg/video.mjpg`
 
-### Prerequisites
 
-What things you need to install the software and how to install them.
+### Object Tracking
+* Run the object tracking model
+```
+cd Object_tracking\Yolov5_DeepSort_Pytorch
+python track.py --source ... --show-vid    # Show live inference as a video
+```
+- The --source argument can be either of these:
+  - Video:  `--source file.mp4`
+   - Webcam:  `--source 0`
+   - RTSP stream:  `--source rtsp://170.93.143.139/rtplive/470011e600ef003a004ee33696235daa`
+   - HTTP stream:  `--source http://wmccpinetop.axiscam.net/mjpg/video.mjpg`
+
+#### Select a Yolov5 family model
+
+There is a clear trade-off between model inference speed and accuracy. In order to make it possible to fulfill your inference speed/accuracy needs
+you can select a Yolov5 family model for automatic download
 
 ```
-Give examples
+python track.py --source 0 --yolo_weights yolov5s.pt --img 640  # smallest yolov5 family model
 ```
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running.
-
-Say what the step will be
-
 ```
-Give the example
+python track.py --source 0 --yolo_weights yolov5x6.pt --img 1280  # largest yolov5 family model
 ```
 
-And repeat
 
-```
-until finished
-```
 
-End with an example of getting some data out of the system or using it for a little demo.
+
 
 ## 🔧 Running the tests <a name = "tests"></a>
 
