@@ -7,3 +7,4 @@ logs/
 *.jpg
 *.png
 *.engine
+*.pt
