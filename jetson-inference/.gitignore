@@ -8,3 +8,6 @@ logs/
 *.png
 *.engine
 *.pt
+*.mp4
+*.whl
+*.mkv
