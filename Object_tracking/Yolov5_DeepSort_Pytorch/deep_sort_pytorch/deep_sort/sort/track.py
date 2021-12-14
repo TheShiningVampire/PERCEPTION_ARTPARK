@@ -73,6 +73,9 @@ class Track:
         self.age = 1
         self.time_since_update = 0
 
+        self.future_mean = None
+
+
         self.state = TrackState.Tentative
         self.features = []
         if feature is not None:
@@ -92,6 +95,22 @@ class Track:
 
         """
         ret = self.mean[:4].copy()
+        ret[2] *= ret[3]
+        ret[:2] -= ret[2:] / 2
+        return ret
+
+    def to_tlwh_traj_pred(self):
+        """
+        Get predicted trajectory end point in bounding box format `(top left x, top left y,
+        width, height)`.
+
+        Returns
+        -------
+        ndarray
+            The bounding box.
+
+        """
+        ret = self.future_mean[:4].copy()
         ret[2] *= ret[3]
         ret[:2] -= ret[2:] / 2
         return ret
@@ -126,6 +145,14 @@ class Track:
         """
         self.mean, self.covariance = kf.predict(self.mean, self.covariance)
         self.increment_age()
+
+    def predict_trajectory(self, kf):
+        """
+        Predict the current trajectory using the Kalman filter for several time steps in future
+        """
+        self.future_mean = self.mean.copy()
+        for i in range(10):
+            self.future_mean, _ = kf.predict(self.future_mean, self.covariance)
 
     def update(self, kf, detection):
         """Perform Kalman filter measurement update step and update the feature

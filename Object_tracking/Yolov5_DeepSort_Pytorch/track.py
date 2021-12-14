@@ -178,21 +178,36 @@ def detect(opt):
                 clss = det[:, 5]
 
                 # pass detections to deepsort
-                outputs = deepsort.update(xywhs.cpu(), confs.cpu(), clss, im0)
+                outputs, traj_end_points = deepsort.update(xywhs.cpu(), confs.cpu(), clss, im0)
 
                 # draw boxes for visualization
                 if len(outputs) > 0:
-                    for j, (output, conf) in enumerate(zip(outputs, confs)):
+                    for j, (output, traj_end_point, conf) in enumerate(zip(outputs, traj_end_points, confs)):
 
                         bboxes = output[0:4]
+                        
+                        # if (i%10 == 0):
+                        #     bboxes_end = traj_end_point[0:4]
+
+                        # Update bbox_end for every 10 frames
+                        if (i%10 == 0):
+                            bboxes_end = traj_end_point[0:4]
+
                         id = output[4]
                         cls = output[5]
+
+                        
 
                         c = int(cls)  # integer class
                         label = f"{id} {names[c]} {conf:.2f}"
                         color = compute_color_for_id(id)
                         plot_one_box(
                             bboxes, im0, label=label, color=color, line_thickness=2
+                        )
+
+                    
+                        plot_one_box(
+                            bboxes_end, im0, label=label, color=color, line_thickness=2
                         )
 
                         if save_txt:
@@ -226,21 +241,23 @@ def detect(opt):
             print("%sDone. (%.3fs)" % (s, t2 - t1))
 
             # print fps on screen
-            fps = 0.0
-            fps = (fps + (1.0 / (time.time() - t1))) / 2
-            cv2.putText(
-                im0,
-                "FPS: {:.2f}".format(fps),
-                (0, 30),
-                cv2.FONT_HERSHEY_COMPLEX_SMALL,
-                1,
-                (0, 0, 255),
-                2,
-            )
-            fps_values.append(fps)
+            # fps = (fps + (1.0 / (time.time() - t1))) / 2
+            # fps = 1/(t2 - t1)
+            # cv2.putText(
+            #     im0,
+            #     "FPS: {:.2f}".format(fps),
+            #     (0, 30),
+            #     cv2.FONT_HERSHEY_COMPLEX_SMALL,
+            #     3,
+            #     (0, 0, 255),
+            #     2,
+            # )
+            # fps_values.append(fps)
 
             # Stream results
             if show_vid:
+                # Resize image to fit on screen
+                # im0 = cv2.resize(im0, (1000, 1000)) 
                 cv2.imshow(p, im0)
                 if cv2.waitKey(1) == ord("q"):  # q to quit
                     raise StopIteration
@@ -270,7 +287,7 @@ def detect(opt):
             os.system("open " + save_path)
 
     print("Done. (%.3fs)" % (time.time() - t0))
-    return fps_values
+    # return fps_values
 
 
 if __name__ == "__main__":
@@ -339,9 +356,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.img_size = check_img_size(args.img_size)
 
+    # Check my video 
+    # args.source = "../../Datasets/Scene_one.mp4"
+    # args.show_vid = True
+
     with torch.no_grad():
-        fps = detect(args)
+        # fps = detect(args)
+        detect(args)
         # write fps to txt file
-        with open("fps.txt", "a") as f:
-            for fps_value in fps:
-                f.write(f'{fps_value:.2f}\n')
+        # with open("fps.txt", "a") as f:
+        #     for fps_value in fps:
+        #         f.write(f'{fps_value:.2f}\n')

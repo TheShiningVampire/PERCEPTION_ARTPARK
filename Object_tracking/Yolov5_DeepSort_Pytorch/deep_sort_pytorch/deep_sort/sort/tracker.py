@@ -55,6 +55,11 @@ class Tracker:
         for track in self.tracks:
             track.predict(self.kf)
 
+    def predict_trajectory(self):
+
+        for track in self.tracks:
+            track.predict_trajectory(self.kf)
+
     def increment_ages(self):
         for track in self.tracks:
             track.increment_age()

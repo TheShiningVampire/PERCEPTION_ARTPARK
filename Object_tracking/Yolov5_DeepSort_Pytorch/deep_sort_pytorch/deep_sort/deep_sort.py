@@ -39,8 +39,12 @@ class DeepSort(object):
         self.tracker.predict()
         self.tracker.update(detections, classes)
 
+        # Trajectory prediction
+        self.tracker.predict_trajectory()
+
         # output bbox identities
         outputs = []
+        traj_end_points = []
         for track in self.tracker.tracks:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
@@ -49,9 +53,20 @@ class DeepSort(object):
             track_id = track.track_id
             class_id = track.class_id
             outputs.append(np.array([x1, y1, x2, y2, track_id, class_id], dtype=np.int))
+
+
+            traj_end_box = track.to_tlwh_traj_pred()
+            x1_end, y1_end, x2_end, y2_end = self._tlwh_to_xyxy(traj_end_box)
+            traj_end_points.append(np.array([x1_end, y1_end, x2_end, y2_end, track_id, class_id], dtype=np.int))
+            
+
         if len(outputs) > 0:
             outputs = np.stack(outputs, axis=0)
-        return outputs
+        
+        if len(traj_end_points) > 0:
+            traj_end_points = np.stack(traj_end_points, axis=0)
+        
+        return outputs, traj_end_points
 
     """
     TODO:
