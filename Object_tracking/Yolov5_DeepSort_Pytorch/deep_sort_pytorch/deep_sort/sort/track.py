@@ -151,7 +151,7 @@ class Track:
         Predict the current trajectory using the Kalman filter for several time steps in future
         """
         self.future_mean = self.mean.copy()
-        for i in range(10):
+        for i in range(100):       # Make prediction for 30 frames in future
             self.future_mean, _ = kf.predict(self.future_mean, self.covariance)
 
     def update(self, kf, detection):
