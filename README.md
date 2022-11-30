@@ -133,6 +133,9 @@ The FPS obtained after object detection are as follows:
 </table>
 </center>
 
+<img src="https://user-images.githubusercontent.com/55876739/204933072-feb31d71-e171-435f-b80e-06b067df4e6f.gif" width="48">
+
+
 ![traj-pred](https://user-images.githubusercontent.com/55876739/204933072-feb31d71-e171-435f-b80e-06b067df4e6f.gif)
 
 
