@@ -133,10 +133,11 @@ The FPS obtained after object detection are as follows:
 </table>
 </center>
 
+## **Trajectory Prediction using Kalman Filter**
 
 ![traj_pred_final](https://user-images.githubusercontent.com/55876739/204935316-ba7ed6b9-383c-4c3b-bea6-eaf01158f7a8.gif)
 
-
+The FPS obtained for the above result is 40.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
